@@ -214,6 +214,8 @@ df = pd.concat([train, test], ignore_index=True)
 
 merge_features = []
 embedding_size = 32
+seed = 2020
+
 tmp = w2v_id_feature(df, 'uid', 'task_id', embedding_size=embedding_size)
 merge_features.append(['uid', tmp[0]])
 merge_features.append(['task_id', tmp[1]])
@@ -267,10 +269,12 @@ for i in tqdm(sparse_feature):
     except:
         continue
         df[i] = lbl.fit_trasnform(df[i].astype('str'))
+
+df = df.fillna(-1)
         
 for i in tqdm(dense_feature):
     try:
-        df[i] = MinMaxScaler().fit_transform(df[i].fillna(-1).values.reshape(-1,1))
+        df[i] = MinMaxScaler().fit_transform(df[i].values.reshape(-1,1))
     except:
         feature_name.remove(i)
         dense_feature.remove(i)
