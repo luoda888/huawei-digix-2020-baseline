@@ -296,6 +296,9 @@ X_train = model_feed_dict(train[feature_name])
 X_valid = model_feed_dict(valid[feature_name])
 X_test = model_feed_dict(test[feature_name])
 
+Y = train['label'].values
+valid_Y = valid['label'].values
+
 torch.cuda.empty_cache()
 
 use_cuda = True
