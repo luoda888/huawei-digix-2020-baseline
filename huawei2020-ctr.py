@@ -210,7 +210,10 @@ df = pd.concat([train, test], ignore_index=True)
 
 # Part 3
 
+merge_features = []
+
 embedding_size = 32
+
 tmp = w2v_id_feature(df, 'uid', 'task_id', embedding_size=embedding_size)
 merge_features.append(['uid', tmp[0]])
 merge_features.append(['task_id', tmp[1]])
