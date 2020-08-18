@@ -12,8 +12,10 @@
 import pandas as pd
 import numpy as np
 import random
+from tqdm import tqdm
 from datetime import datetime
 from sklearn.preprocessing import *
+from sklearn.model_selection import StratifiedKFold
 
 from deepctr_torch.models import xDeepFM 
 from deepctr_torch.inputs import SparseFeat, DenseFeat, get_feature_names
@@ -114,7 +116,7 @@ def kfold_stats_feature(train, test, feats, k):
         train.loc[val_idx, 'fold'] = fold_
 
     kfold_features = []
-    for feat in feats:
+    for feat in tqdm(feats):
         nums_columns = ['label']
         for f in nums_columns:
             colname = feat + '_' + f + '_kfold_mean'
@@ -201,7 +203,7 @@ for i in tqdm(to_group):
         for k in to_calc:
             feature["STAT_{}_{}_{}".format("_".join(i),j,k)] = df[i + [j]].groupby(i)[j].transform(k)
 
-choose = df[df['pt_d']!=8]
+choose = df['pt_d']!=8
 train, test = df[choose].reset_index(drop=True), df[~choose].reset_index(drop=True)
 target_encode_cols = ['uid', 'task_id', 'adv_id', 'creat_type_cd', 'adv_prim_id', 
                   	  'dev_id', 'inter_type_cd', 'slot_id', 'spread_app_id', 'tags', 'app_first_class',]
@@ -211,9 +213,7 @@ df = pd.concat([train, test], ignore_index=True)
 # Part 3
 
 merge_features = []
-
 embedding_size = 32
-
 tmp = w2v_id_feature(df, 'uid', 'task_id', embedding_size=embedding_size)
 merge_features.append(['uid', tmp[0]])
 merge_features.append(['task_id', tmp[1]])
